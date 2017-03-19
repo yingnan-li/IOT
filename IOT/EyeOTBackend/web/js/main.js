@@ -14,16 +14,128 @@ $('.datepicker').datepicker({
 $(document).ready(function () {
     var d = new Date();
     $(".datepicker").val(returnCorrectDate(d));
-    
-    $('[data-toggle="tooltip"]').tooltip(); 
-
 
     setInterval(function () {
         var today = new Date();
-        var currentTimeFormat = returnCorrectDate(today) + " " + returnCorrectTime(today)
-        $("#currentTime").text(currentTimeFormat)
+        $("#currentTime").text(returnCorrectDate(today) + " " + returnCorrectTime(today))
     }, 1000);
+
+    activeDutyTable(d);
+
 })
+
+$("#notify-send-sms").click(function () {
+    progressBarNotification();
+    setTimeout(function () {
+        sendSMSSuccessfully();
+    }, 4000);
+});
+
+function sendSMSSuccessfully() {
+    $.notify({
+        icon: 'glyphicon glyphicon-phone',
+        title: "<strong>Successful Message Notification</strong><br>:",
+        message: "You have successfully sent the message to X."
+    }, {
+        showProgressbar: false,
+        placement: {
+            from: "top",
+            align: "center"
+        },
+        type: 'success'
+    });
+}
+
+function progressBarNotification() {
+    $.notify({
+        icon: 'glyphicon glyphicon-hourglass',
+        title: "Loading",
+        message: ""
+    }, {
+        showProgressbar: true,
+        placement: {
+            from: "top",
+            align: "center"
+        },
+        type: 'info',
+        delay: 2000,
+        timer: 1000,
+    });
+}
+
+function activeDutyTable(date) {
+    var hour = date.getHours();
+    var list = [];
+    for (var i = hour; i <= 23; i++) {
+        list.push(i);
+    }
+    for (var i = 0; i < hour; i++) {
+        list.push(i);
+    }
+
+    for (x in list) {
+        if (list[x] < 8 | list[x] == 23) {
+            $("#duty-table").append("<tr class=\"duty-table-closed\">" +
+                "<td style=\"text-align:center;\">" + convertSingleValueTime(list[x]) +
+                "</td><td style=\"padding-left:20px;\">" +
+                "<span>Closed</span></td></tr>");
+        } else {
+            rand = Math.random()
+            switch (true) {
+            case (rand < 0.1):
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/wj.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            case (rand < 0.2):
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/mh.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            case (rand < 0.3):
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/merv.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            case (rand < 0.4):
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/wj.png\" class=\"image-responsive duty-img\">" +
+                    "<img src=\"img/mh.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            case (rand < 0.5):
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/wj.png\" class=\"image-responsive duty-img\">" +
+                    "<img src=\"img/merv.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            case (rand < 0.6):
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/mh.png\" class=\"image-responsive duty-img\">" +
+                    "<img src=\"img/merv.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            default:
+                $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                    convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+                    "<img src=\"img/wj.png\" class=\"image-responsive duty-img\">" +
+                    "<img src=\"img/mh.png\" class=\"image-responsive duty-img\">" +
+                    "<img src=\"img/merv.png\" class=\"image-responsive duty-img\">" +
+                    "</td></tr>");
+                break;
+            }
+
+        }
+
+    }
+
+}
 
 function returnCorrectDate(date) {
     var day = date.getDate();
@@ -69,9 +181,7 @@ function returnCorrectDate(date) {
         break;
     }
 
-    if (day % 10 == day) {
-        day = "0" + day
-    }
+    day = convertSingleValueTime(day)
 
     return (day + "-" + month + "-" + year)
 }
@@ -81,19 +191,18 @@ function returnCorrectTime(date) {
     var minutes = date.getMinutes();
     var sec = date.getSeconds();
 
-    if (hours < 10) {
-        hours = "0" + hours
-    }
-
-    if (minutes < 10) {
-        minutes = "0" + minutes
-    }
-
-    if (sec < 10) {
-        sec = "0" + sec
-    }
+    hours = convertSingleValueTime(hours)
+    minutes = convertSingleValueTime(minutes)
+    sec = convertSingleValueTime(sec)
 
     return (hours + ":" + minutes + ":" + sec)
+}
+
+function convertSingleValueTime(int) {
+    if (int < 10) {
+        int = "0" + int;
+    }
+    return int
 }
 
 //**********************************

@@ -94,18 +94,18 @@ textarea {
 
 body {
     font-family: 'Source Sans Pro', sans-serif;
-    background-color:#eaeaea;
+    background-color: #eaeaea;
 }
 
-.card{
-    background-color:#ffffff;
+.card {
+    background-color: #ffffff;
     margin-left: 10px;
     margin-right: 10px;
-    padding:15px;
+    padding: 15px;
 }
 
 .card-contents {
-    text-align:center;
+    text-align: center;
 }
 
 .title {
@@ -115,7 +115,7 @@ body {
 }
 
 .subtitle {
-    color:#aeaeae;
+    color: #aeaeae;
     font-size: 1.5em;
     float: left;
 }
@@ -223,8 +223,31 @@ body {
 
 .duty-img {
     height: 45px;
+    padding-right: 10px;
 }
 
+.duty-table-closed {
+    height: 60px;
+    background-color: #808080;
+    color: #fff;
+}
+
+.duty-table-closed > td {
+    padding-top: 13px !important;
+}
+
+.duty-table-centered {
+    padding-top: 13px !important;
+}
+
+[data-notify="progressbar"] {
+	margin-bottom: 0px;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;
+	height: 5px;
+}
 
 /*
 D3 Styles
