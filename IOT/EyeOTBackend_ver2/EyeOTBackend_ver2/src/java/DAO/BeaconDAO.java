@@ -63,13 +63,14 @@ public class BeaconDAO {
                 String id = results.getString(BEACON_ID);
                 String location = results.getString(LOCATION_COL);                  
                 Beacon beacon = new Beacon(id, location); //  Beacon(String id, String location)
+                beaconList.add(beacon);
             }
             
           
         } catch (SQLException ex) {
             Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return beacon;
+        return beaconList;
         
     }
 }
