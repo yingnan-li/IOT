@@ -18,9 +18,9 @@ import java.util.logging.Logger;
  */
 public class PiOnTrolleytoBeaconDAO {
 
-    public int insertTrolleyAlarmEvent(String beaconID, String piID, long timestamp) {
+    public int insertTrolleyAlarmEvent(String beaconID, String piID, long timestamp,String isBack) {
         int rowInserted = 0;
-        String sqlQuery = "insert into trolleypi_beacon_event values (?,(select TrolleyID from pi_on_trolley where PiID=?),?,?)";
+        String sqlQuery = "insert into trolleypi_beacon_event values (?,(select TrolleyID from pi_on_trolley where PiID=?),?,?,?)";
 
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
@@ -29,6 +29,10 @@ public class PiOnTrolleytoBeaconDAO {
             ps.setString(3, beaconID);
             Timestamp ts = new Timestamp(timestamp);
             ps.setTimestamp(4, ts);
+            if(isBack==null){
+                isBack = "false";
+            }
+            ps.setString(5, isBack);
             rowInserted = ps.executeUpdate();
 
         } catch (SQLException ex) {

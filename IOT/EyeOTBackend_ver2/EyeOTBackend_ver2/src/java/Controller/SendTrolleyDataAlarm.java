@@ -41,8 +41,9 @@ public class SendTrolleyDataAlarm extends HttpServlet {
         String beaconID = request.getParameter("BeaconID");
         String PiID = request.getParameter("PiID");
         String timestamp = request.getParameter("BeaconTimestamp");
+        String isBack = request.getParameter("isBack");
         PiOnTrolleytoBeaconDAO piOnTrolleyToBeaconDAO = new PiOnTrolleytoBeaconDAO();
-        piOnTrolleyToBeaconDAO.insertTrolleyAlarmEvent(beaconID, PiID, Long.parseLong(timestamp));
+        piOnTrolleyToBeaconDAO.insertTrolleyAlarmEvent(beaconID, PiID, Long.parseLong(timestamp),isBack);
         
         BeaconDAO beaconDAO = new BeaconDAO();
         String location = beaconDAO.getBeaconDetails(beaconID).getLocation();
