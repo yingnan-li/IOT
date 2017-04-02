@@ -6,12 +6,10 @@
 package Controller;
 
 import DAO.BeaconDAO;
+import DAO.PiDAO;
 import DAO.Trolleypi_beacon_eventDAO;
-import Entity.Beacon;
-import Entity.Trolleypi_beacon_event;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Jason
  */
-@WebServlet(name = "RetrieveDailyTriggeredAlarm", urlPatterns = {"/RetrieveDailyTriggeredAlarm"})
-public class RetrieveDailyTriggeredAlarm extends HttpServlet {
+@WebServlet(name = "RetrieveTrolleyOverview", urlPatterns = {"/RetrieveTrolleyOverview"})
+public class RetrieveTrolleyOverview extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,55 +37,20 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // Declaration
+        response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonArray dailyRecordList = new JsonArray();
         
-        BeaconDAO beaconDAO = new BeaconDAO();
+        PiDAO piDAO = new PiDAO();
         Trolleypi_beacon_eventDAO trolleypi_beacon_eventDAO = new Trolleypi_beacon_eventDAO();
-        String[] timestampInHour = new String[24];
+        int total_trolley = piDAO.getAllPiDetails().size();
+        int missing_trolley = trolleypi_beacon_eventDAO.getAllMissingBeaconCount();
         
-        for(int i = 0; i < 24; i++){
-            if(i < 10){
-                timestampInHour[i] = "0" + i;
-            } else {
-                timestampInHour[i] = "" + i;
-            }
-        }
+        JsonObject output = new JsonObject(); 
+        output.addProperty("total_trolley", total_trolley);
+        output.addProperty("missing_trolley", missing_trolley);
         
-        for(String hour : timestampInHour){
-            JsonObject timeObject = new JsonObject();            
-            JsonArray exitArray = new JsonArray();
-            
-            // get all exits
-            for(Beacon beacon : beaconDAO.getAllExitBeaconDetails()){ // every beacon is an exit
-                JsonArray trolleyArray = new JsonArray();
-                JsonObject exitObject = new JsonObject();
-                String exit = beacon.getLocation();
-                for(Trolleypi_beacon_event beacon_event : trolleypi_beacon_eventDAO.getAllBeaconEvent()){
-                    if(hour.equalsIgnoreCase(beacon_event.getTimestamp())){
-                        JsonObject trolleyObject = new JsonObject();
-                        //get beacon location
-                        String locationOfBeaconEvent = beaconDAO.getBeaconDetails(beacon_event.getBeaconID()).getLocation();
-                        System.out.println(exit);
-                        System.out.println(locationOfBeaconEvent);
-                        if(exit.equalsIgnoreCase(locationOfBeaconEvent)){
-                            trolleyObject.addProperty("Trolley_Name", beacon_event.getTrolleyID());
-                            trolleyObject.addProperty("Timestamp", beacon_event.getTime());
-                            trolleyArray.add(trolleyObject);
-                        }
-                    }    
-                }
-                exitObject.add(exit, trolleyArray);
-                exitArray.add(exitObject);
-            }            
-            timeObject.add(hour, exitArray);
-            dailyRecordList.add(timeObject);
-        }
-        
-        out.println(gson.toJson(dailyRecordList));
+         out.println(gson.toJson(output));
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

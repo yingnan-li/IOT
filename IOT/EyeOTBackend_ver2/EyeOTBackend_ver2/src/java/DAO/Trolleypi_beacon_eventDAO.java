@@ -54,5 +54,50 @@ public class Trolleypi_beacon_eventDAO {
         return beaconEventList;
         
     }
-    
+    public int getAllMissingBeaconCount(){
+        
+        int num_of_missing_trolley = 0;
+        String sqlQuery = "SELECT count(DISTINCT TrolleyID) as num_of_missing_trolley FROM `trolleypi_beacon_event` where isBack = 'false' order by Timestamp desc";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
+            
+            ResultSet results = ps.executeQuery();
+            while(results.next()){
+                num_of_missing_trolley = Integer.parseInt(results.getString("num_of_missing_trolley"));
+            }
+            
+          
+        } catch (SQLException ex) {
+            Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return num_of_missing_trolley;
+        
+    }
+    public List<Trolleypi_beacon_event> getAllMissingBeaconEvent(){
+        
+        List<Trolleypi_beacon_event> beaconEventList = new ArrayList<>();
+        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, HOUR(Timestamp) as hour, Time(Timestamp) as timestamp FROM `trolleypi_beacon_event` where isBack = 'false'";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
+            
+            ResultSet results = ps.executeQuery();
+            while(results.next()){
+                String PiID = results.getString(PIID);
+                String TrolleyID = results.getString(TROLLEY_ID);                  
+                String BeaconID = results.getString(BEACON_ID);                  
+                String Hour = results.getString(HOUR);                  
+                String Time = results.getString(TIME);                  
+                Trolleypi_beacon_event beaconEvent = new Trolleypi_beacon_event(PiID, TrolleyID, BeaconID, Hour, Time);
+                beaconEventList.add(beaconEvent);
+            }
+            
+          
+        } catch (SQLException ex) {
+            Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return beaconEventList;
+        
+    }
 }

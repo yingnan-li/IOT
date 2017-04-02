@@ -20,7 +20,8 @@ import java.util.logging.Logger;
  *
  * @author user
  */
-public class PiDAO {
+public class PiDAO { 
+    private final String PIID = "PiID";
     private final String LOCATION_COL = "placed_location";
     private final String TYPE_COL = "type";
     
@@ -47,6 +48,33 @@ public class PiDAO {
             Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return pi;
+        
+    }
+    
+    public List<Pi> getAllPiDetails(){
+        
+        List<Pi> piList = new ArrayList<>();
+        
+        Pi pi = null;
+        String sqlQuery="SELECT * FROM pi";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
+            
+            ResultSet results = ps.executeQuery();
+            while(results.next()){
+                String PiID = results.getString(PIID); 
+                String location = results.getString(LOCATION_COL); 
+                String type = results.getString(TYPE_COL); 
+                pi = new Pi(PiID, location, type);
+                piList.add(pi);
+            }
+            
+          
+        } catch (SQLException ex) {
+            Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return piList;
         
     }
 }
