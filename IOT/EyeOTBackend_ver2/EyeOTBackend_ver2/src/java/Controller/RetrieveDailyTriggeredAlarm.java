@@ -5,6 +5,10 @@
  */
 package Controller;
 
+import DAO.BeaconDAO;
+import DAO.Trolleypi_beacon_eventDAO;
+import Entity.Beacon;
+import Entity.Trolleypi_beacon_event;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -41,19 +45,41 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonArray dailyRecordList = new JsonArray();
         
+        BeaconDAO beaconDAO = new BeaconDAO();
+        Trolleypi_beacon_eventDAO trolleypi_beacon_eventDAO = new Trolleypi_beacon_eventDAO();
         String[] timestampInHour = {"18", "19"};
         
         for(String hour : timestampInHour){
-            JsonObject timeObject = new JsonObject();
-            
+            JsonObject timeObject = new JsonObject();            
             JsonArray exitArray = new JsonArray();
-            JsonObject exitObject = new JsonObject();
-            // get all exits 
-           exitArray.add(exitObject);
             
+            // get all exits
+            for(Beacon beacon : beaconDAO.getAllExitBeaconDetails()){ // every beacon is an exit
+                JsonArray trolleyArray = new JsonArray();
+                JsonObject exitObject = new JsonObject();
+                String exit = beacon.getLocation();
+                for(Trolleypi_beacon_event beacon_event : trolleypi_beacon_eventDAO.getAllBeaconEvent()){
+                    if(hour.equalsIgnoreCase(beacon_event.getTimestamp())){
+                        JsonObject trolleyObject = new JsonObject();
+                        //get beacon location
+                        String locationOfBeaconEvent = beaconDAO.getBeaconDetails(beacon_event.getBeaconID()).getLocation();
+                        System.out.println(exit);
+                        System.out.println(locationOfBeaconEvent);
+                        if(exit.equalsIgnoreCase(locationOfBeaconEvent)){
+                            trolleyObject.addProperty("Trolley_Name", beacon_event.getTrolleyID());
+                            trolleyObject.addProperty("Timestamp", beacon_event.getTime());
+                            trolleyArray.add(trolleyObject);
+                        }
+                    }    
+                }
+                exitObject.add(exit, trolleyArray);
+                exitArray.add(exitObject);
+            }            
             timeObject.add(hour, exitArray);
             dailyRecordList.add(timeObject);
         }
+        
+        out.println(gson.toJson(dailyRecordList));
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

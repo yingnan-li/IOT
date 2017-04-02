@@ -12,10 +12,17 @@ package Entity;
 public class Beacon {
     private String id;
     private String location;
+    private String type;
 
     public Beacon(String id, String location) {
         this.id = id;
         this.location = location;
+    }
+
+    public Beacon(String id, String location, String type) {
+        this.id = id;
+        this.location = location;
+        this.type = type;
     }
 
     public String getId() {
@@ -32,6 +39,14 @@ public class Beacon {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
     
     

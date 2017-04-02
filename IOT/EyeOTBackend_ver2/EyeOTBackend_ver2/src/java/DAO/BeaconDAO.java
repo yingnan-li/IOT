@@ -24,6 +24,7 @@ public class BeaconDAO {
     
     private final String BEACON_ID = "BeaconID";
     private final String LOCATION_COL = "Location";
+    private final String TYPE = "Type";
     
     public Beacon getBeaconDetails(String beaconID){
         
@@ -39,7 +40,8 @@ public class BeaconDAO {
             while(results.next()){
                 String id = results.getString(BEACON_ID);
                 String location = results.getString(LOCATION_COL);                  
-                beacon = new Beacon(id, location); //  Beacon(String id, String location)
+                String type = results.getString(TYPE);                  
+                beacon = new Beacon(id, location, type); //  Beacon(String id, String location)
             }
             
           
@@ -50,10 +52,10 @@ public class BeaconDAO {
         
     }
     
-    public List<Beacon> getAllBeaconDetails(){
+    public List<Beacon> getAllExitBeaconDetails(){
         
         List<Beacon> beaconList = new ArrayList<>();
-        String sqlQuery = "SELECT * FROM beacon";
+        String sqlQuery = "SELECT * FROM beacon where type = 'exit'";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
@@ -61,8 +63,9 @@ public class BeaconDAO {
             ResultSet results = ps.executeQuery();
             while(results.next()){
                 String id = results.getString(BEACON_ID);
-                String location = results.getString(LOCATION_COL);                  
-                Beacon beacon = new Beacon(id, location); //  Beacon(String id, String location)
+                String location = results.getString(LOCATION_COL);   
+                String type = results.getString(TYPE); 
+                Beacon beacon = new Beacon(id, location, type); //  Beacon(String id, String location)
                 beaconList.add(beacon);
             }
             
