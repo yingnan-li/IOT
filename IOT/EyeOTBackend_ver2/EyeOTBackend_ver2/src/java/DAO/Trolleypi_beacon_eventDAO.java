@@ -58,14 +58,16 @@ public class Trolleypi_beacon_eventDAO {
     public int getAllMissingBeaconCount(){
         
         int num_of_missing_trolley = 0;
-        String sqlQuery = "SELECT count(DISTINCT TrolleyID) as num_of_missing_trolley FROM `trolleypi_beacon_event` where isBack = 'false' order by Timestamp desc";
+        String sqlQuery = "select * from trolleypi_beacon_event a inner join ( SELECT TrolleyID, max(Timestamp) as test "
+                + "FROM `trolleypi_beacon_event` group by TrolleyID ) as temp on a.TrolleyID = temp.TrolleyID "
+                + "and a.Timestamp = temp.test where isBack = 'false'";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
             
             ResultSet results = ps.executeQuery();
             while(results.next()){
-                num_of_missing_trolley = Integer.parseInt(results.getString("num_of_missing_trolley"));
+                num_of_missing_trolley++;
             }
             
           
