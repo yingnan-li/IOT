@@ -33,7 +33,7 @@ public class Trolleypi_beacon_eventDAO {
         
         List<Trolleypi_beacon_event> beaconEventList = new ArrayList<>();
 //        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, HOUR(Timestamp) as hour, Time(Timestamp) as timestamp FROM `trolleypi_beacon_event` group by HOUR(Timestamp)";
-        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, Timestamp FROM trolleypi_beacon_event";
+        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, Timestamp FROM trolleypi_beacon_event where isBack = 'false'";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
