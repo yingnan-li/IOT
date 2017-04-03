@@ -15,6 +15,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,12 +43,16 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ParseException {
+        
+        String current_date = request.getParameter("date");
+//        current_date = "2017-04-03 17:36:02";
         
         // Declaration
         PrintWriter out = response.getWriter();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonArray dailyRecordList = new JsonArray();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
         
         BeaconDAO beaconDAO = new BeaconDAO();
         Trolleypi_beacon_eventDAO trolleypi_beacon_eventDAO = new Trolleypi_beacon_eventDAO();
@@ -56,30 +65,35 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
                 timestampInHour[i] = "" + i;
             }
         }
-        
+
         for(String hour : timestampInHour){
             JsonObject timeObject = new JsonObject();            
             JsonArray exitArray = new JsonArray();
             
             // get all exits
             for(Beacon beacon : beaconDAO.getAllExitBeaconDetails()){ // every beacon is an exit
+                int count = 0;
                 JsonArray trolleyArray = new JsonArray();
                 JsonObject exitObject = new JsonObject();
                 String exit = beacon.getLocation();
+                JsonObject trolleyObject = new JsonObject();
                 for(Trolleypi_beacon_event beacon_event : trolleypi_beacon_eventDAO.getAllBeaconEvent()){
-                    if(hour.equalsIgnoreCase(beacon_event.getTimestamp())){
-                        JsonObject trolleyObject = new JsonObject();
+//                    System.out.println("beacon event " + (hour.equalsIgnoreCase( f.parse(beacon_event.getTimestamp()).getHours()+"" )));
+//                    System.out.println("date " + (f.parse(beacon_event.getTimestamp()).getDate() == new Date().getDate()));
+//                    if(hour.equalsIgnoreCase( f.parse(beacon_event.getTimestamp()).getHours()+"" ) && f.parse(beacon_event.getTimestamp()).getDate() == new Date().getDate()){
+                    if(hour.equalsIgnoreCase( f.parse(beacon_event.getTimestamp()).getHours()+"" ) && f.parse(beacon_event.getTimestamp()).getDate() == f.parse(current_date).getDate()){
+//                        JsonObject trolleyObject = new JsonObject();
                         //get beacon location
                         String locationOfBeaconEvent = beaconDAO.getBeaconDetails(beacon_event.getBeaconID()).getLocation();
-                        System.out.println(exit);
-                        System.out.println(locationOfBeaconEvent);
                         if(exit.equalsIgnoreCase(locationOfBeaconEvent)){
-                            trolleyObject.addProperty("Trolley_Name", beacon_event.getTrolleyID());
-                            trolleyObject.addProperty("Timestamp", beacon_event.getTime());
-                            trolleyArray.add(trolleyObject);
+//                            trolleyObject.addProperty("Trolley_Name", beacon_event.getTrolleyID());
+//                            trolleyObject.addProperty("Timestamp", beacon_event.getTime());
+                            trolleyObject.addProperty("occurence", ++count);
+//                            trolleyArray.add(trolleyObject);
                         }
                     }    
                 }
+                trolleyArray.add(trolleyObject);
                 exitObject.add(exit, trolleyArray);
                 exitArray.add(exitObject);
             }            
@@ -102,7 +116,11 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(RetrieveDailyTriggeredAlarm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -116,7 +134,11 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(RetrieveDailyTriggeredAlarm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
