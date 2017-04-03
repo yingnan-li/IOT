@@ -43,21 +43,23 @@ public class SendTrolleyDataAlarm extends HttpServlet {
         String timestamp = request.getParameter("BeaconTimestamp");
         String isBack = request.getParameter("isBack");
         PiOnTrolleytoBeaconDAO piOnTrolleyToBeaconDAO = new PiOnTrolleytoBeaconDAO();
-        piOnTrolleyToBeaconDAO.insertTrolleyAlarmEvent(beaconID, PiID, Long.parseLong(timestamp),isBack);
-        
+        piOnTrolleyToBeaconDAO.insertTrolleyAlarmEvent(beaconID, PiID, Long.parseLong(timestamp), isBack);
+
         BeaconDAO beaconDAO = new BeaconDAO();
         String location = beaconDAO.getBeaconDetails(beaconID).getLocation();
         OfficerDAO officerDao = new OfficerDAO();
         General general = new General();
         List<Officer> officerList = officerDao.getAvailableOfficerList();
-        
+
         // sms is sent whenever alarm is triggered
-        for (Officer officer : officerList) {
-            String phoneNum = officer.getPhoneNum();
-            String name = officer.getName();
-            String msg = "Hello " + name + ",\n Please proceed to " + location + " to retrieve the trolley!";
-            String url = general.sendSMS(phoneNum, msg);
-            response.sendRedirect(url);
+        if (isBack == null) {
+            for (Officer officer : officerList) {
+                String phoneNum = officer.getPhoneNum();
+                String name = officer.getName();
+                String msg = "Hello " + name + ",\n Please proceed to " + location + " to retrieve the trolley!";
+                String url = general.sendSMS(phoneNum, msg);
+                response.sendRedirect(url);
+            }
         }
     }
 

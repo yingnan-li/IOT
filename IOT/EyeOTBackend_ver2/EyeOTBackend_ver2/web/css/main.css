@@ -143,25 +143,17 @@ body {
 .locCircle {
     position: absolute;
     height: 45px;
-    width: 45px;
+    width: 120px;
     background-color: white;
     border: 2px solid black;
     text-align: center;
     font-size: 2em;
     font-weight: bold;
-    opacity: 0.5;
-}
-
-.locCircle:hover {
-    opacity: 1.0;
-    transition: opacity .25s ease-in-out;
-    -moz-transition: opacity .25s ease-in-out;
-    -webkit-transition: opacity .25s ease-in-out;
 }
 
 #block1 {
-    left: 55px;
-    top: 150px;
+    left: 25px;
+    top: 220px;
 }
 
 #block2 {
@@ -170,13 +162,13 @@ body {
 }
 
 #block3 {
-    left: 640px;
-    top: 420px;
+    left: 600px;
+    top: 380px;
 }
 
 #block4 {
     left: 180px;
-    top: 440px;
+    top: 400px;
 }
 
 #blockMis {

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author user
  */
-@WebServlet(name = "RetrieveWeeklyTriggerAlarm", urlPatterns = {"/RetrieveWeeklyTriggerAlarm"})
+@WebServlet(name = "RetrieveWeeklyTriggeredAlarm", urlPatterns = {"/RetrieveWeeklyTriggeredAlarm"})
 public class RetrieveWeeklyTriggeredAlarm extends HttpServlet {
 
     /**
