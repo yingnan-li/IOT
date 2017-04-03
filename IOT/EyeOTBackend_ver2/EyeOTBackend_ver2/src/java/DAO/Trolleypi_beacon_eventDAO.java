@@ -27,12 +27,13 @@ public class Trolleypi_beacon_eventDAO {
     private final String TROLLEY_ID = "TrolleyID";
     private final String BEACON_ID = "BeaconID";
     private final String HOUR = "hour";
-    private final String TIME = "timestamp";
+    private final String TIME = "Timestamp";
     
     public List<Trolleypi_beacon_event> getAllBeaconEvent(){
         
         List<Trolleypi_beacon_event> beaconEventList = new ArrayList<>();
-        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, HOUR(Timestamp) as hour, Time(Timestamp) as timestamp FROM `trolleypi_beacon_event` group by HOUR(Timestamp)";
+//        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, HOUR(Timestamp) as hour, Time(Timestamp) as timestamp FROM `trolleypi_beacon_event` group by HOUR(Timestamp)";
+        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, Timestamp FROM trolleypi_beacon_event where isBack = 'false'";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
@@ -42,9 +43,9 @@ public class Trolleypi_beacon_eventDAO {
                 String PiID = results.getString(PIID);
                 String TrolleyID = results.getString(TROLLEY_ID);                  
                 String BeaconID = results.getString(BEACON_ID);                  
-                String Hour = results.getString(HOUR);                  
+//                String Hour = results.getString(HOUR);                  
                 String Time = results.getString(TIME);                  
-                Trolleypi_beacon_event beaconEvent = new Trolleypi_beacon_event(PiID, TrolleyID, BeaconID, Hour, Time);
+                Trolleypi_beacon_event beaconEvent = new Trolleypi_beacon_event(PiID, TrolleyID, BeaconID, Time);
                 beaconEventList.add(beaconEvent);
             }
             
@@ -77,32 +78,32 @@ public class Trolleypi_beacon_eventDAO {
         return num_of_missing_trolley;
         
     }
-    public List<Trolleypi_beacon_event> getAllMissingBeaconEvent(){
-        
-        List<Trolleypi_beacon_event> beaconEventList = new ArrayList<>();
-        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, HOUR(Timestamp) as hour, Time(Timestamp) as timestamp FROM `trolleypi_beacon_event` where isBack = 'false'";
-        
-        try (Connection conn = ConnectionManager.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
-            
-            ResultSet results = ps.executeQuery();
-            while(results.next()){
-                String PiID = results.getString(PIID);
-                String TrolleyID = results.getString(TROLLEY_ID);                  
-                String BeaconID = results.getString(BEACON_ID);                  
-                String Hour = results.getString(HOUR);                  
-                String Time = results.getString(TIME);                  
-                Trolleypi_beacon_event beaconEvent = new Trolleypi_beacon_event(PiID, TrolleyID, BeaconID, Hour, Time);
-                beaconEventList.add(beaconEvent);
-            }
-            
-          
-        } catch (SQLException ex) {
-            Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return beaconEventList;
-        
-    }
+//    public List<Trolleypi_beacon_event> getAllMissingBeaconEvent(){
+//        
+//        List<Trolleypi_beacon_event> beaconEventList = new ArrayList<>();
+//        String sqlQuery = "SELECT PiID, TrolleyID, BeaconID, HOUR(Timestamp) as hour, Time(Timestamp) as timestamp FROM `trolleypi_beacon_event` where isBack = 'false'";
+//        
+//        try (Connection conn = ConnectionManager.getConnection();
+//                PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
+//            
+//            ResultSet results = ps.executeQuery();
+//            while(results.next()){
+//                String PiID = results.getString(PIID);
+//                String TrolleyID = results.getString(TROLLEY_ID);                  
+//                String BeaconID = results.getString(BEACON_ID);                  
+//                String Hour = results.getString(HOUR);                  
+//                String Time = results.getString(TIME);                  
+//                Trolleypi_beacon_event beaconEvent = new Trolleypi_beacon_event(PiID, TrolleyID, BeaconID, Hour, Time);
+//                beaconEventList.add(beaconEvent);
+//            }
+//            
+//          
+//        } catch (SQLException ex) {
+//            Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return beaconEventList;
+//        
+//    }
     
     
      public HashMap<String,String> getMissingTrolleyByWeek(){

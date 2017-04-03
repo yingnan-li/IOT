@@ -64,9 +64,7 @@ public class PiDAO {
             ResultSet results = ps.executeQuery();
             while(results.next()){
                 String PiID = results.getString(PIID); 
-                String location = results.getString(LOCATION_COL); 
-                String type = results.getString(TYPE_COL); 
-                pi = new Pi(PiID, location, type);
+                pi = new Pi(PiID);
                 piList.add(pi);
             }
             
