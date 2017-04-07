@@ -93,11 +93,11 @@ timeSeriesMonth = function (obj) {
                 axisX: {
                     lineDashType: "dot",
                     lineThickness: 2,
-                    title: "Alarms Triggered"
+                    title: "Month"
                 },
                 axisY: {
                     gridThickness: 0,
-                    title: "Month"
+                    title: "Alarms Triggered"
                 },
                 data: [{
                         type: "area",
