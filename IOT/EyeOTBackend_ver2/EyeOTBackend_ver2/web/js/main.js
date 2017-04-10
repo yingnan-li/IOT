@@ -174,6 +174,24 @@ $(document).ready(function () {
     console.log(date);
     retrieveDaily(date);
     retrieveBattery();
+
+    // To generate enforcer schedule dynamically in MODAL
+    getEnforcementOfficerSchedule(date, function (responseText) {
+        response = JSON.parse(responseText);
+        for (var x = 0; x < response.length; x++)
+        {
+            var single = response[x];
+            var officerName = single.officer.name;
+            var phoneNum = single.officer.phoneNum;
+
+            $('#enforcement-select').append($('<option>', {
+                value: phoneNum,
+                text: officerName
+            }));
+        }
+
+    })
+
 });
 
 
@@ -290,59 +308,133 @@ function activeDutyTable(date) {
                     "</td><td style=\"padding-left:20px;\">" +
                     "<span>Closed</span></td></tr>");
         } else {
-            rand = Math.random()
-            switch (true) {
-                case (rand < 0.1):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.2):
+//            rand = Math.random()
+//            switch (true) {
+//                case (rand < 0.1):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.2):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.3):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.4):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.5):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.6):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//                default:
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+            //}
+
+
+            getEnforcementOfficerSchedule(date, function (response) {
+
+                mapOfficerToHour(response);
+                for (var x = 0; x < response.length; x++)
+                {
+                    var single = response[x];
+                    var officerName = single.officer.name;
+                    var phoneNum = single.officer.phoneNum;
+                    var startTime = single.startTime;
+                    var endTime = single.endTime;
+                    var image = single.officer.image;
+
+                    $('#enforcement-select').append($('<option>', {
+                        value: phoneNum,
+                        text: officerName
+                    }));
+
+
                     $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
                             convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
                             "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.3):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
                             "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
                             "</td></tr>");
-                    break;
-                case (rand < 0.4):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.5):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.6):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-                default:
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-            }
+
+
+                }
+
+            });
         }
     }
 }
+
+
+
+function mapOfficerToHour(data) {
+    var scheduleMap = {};
+for(var x=0; x <23 ; x++)
+{
+    for (var x = 0; x < data.length; x++)
+    {
+        var single = data[x];
+        var officerName = single.officer.name;
+        var phoneNum = single.officer.phoneNum;
+        var startTime = single.startTime;
+        var endTime = single.endTime;
+        var image = single.officer.image;
+
+        
+        if(x>startTime && x< endTime)
+        {
+            var list = scheduleMap[x];
+            if(list ===undefined)
+            {
+                list = [];
+            }
+            list.push(x);
+            scheduleMap[x] = list;
+        }
+        
+//        for(var i=startTime;i<=endTime;i++){
+//            scheduleMap[i] = single;
+//            
+//            
+//        }
+
+    }
+    
+}
+    
+
+
+}
+
+
+
 
 
 //**********************************
@@ -350,6 +442,7 @@ function activeDutyTable(date) {
 //**********************************
 var actionableFunction = function (percent) {
     var today = new Date();
+
     var customButton = "<tr><td colspan=\"3\"><center><button type=\"button\" class=\"btn btn-success\" style=\"font-size: 1em; margin-top: 10px; width: 100%;\"" +
             "data-toggle=\"modal\" data-target=\".send-sms-modal\" id=\"actionable-custom\">Send Custom SMS</button></center></td></tr>";
 
@@ -378,10 +471,42 @@ $("#enforcement-select").change(function () {
     }
 });
 
+// Called when document load to generate enforcer schedule dynamically in MODAL
+function getEnforcementOfficerSchedule(date, response) {
+    $.ajax({
+        url: 'RetrieveEmployeeSchedule',
+        data: {
+            date: date
+        },
+        success: response
+    });
+}
+
+function sendSMS(phone_no, msg) {
+//    alert(phone_no);
+    $.ajax({
+        url: 'SendSMS',
+        data: {phone_no: phone_no, msg: msg},
+        success: function (responseText) {
+            response = JSON.parse(responseText);
+        }
+    });
+}
+//==========================================================================================================================
 $("#notify-send-sms").click(function () {
+    var phone_no = $('#sms-mobile').val();
+    var dropdown_num = $('#enforcement-select').val();
+    var msg = $('#sms-textArea').val();
+
+    if (phone_no == null || phone_no == undefined || phone_no.length < 1) {
+        phone_no = dropdown_num;
+    }
+
     progressBarNotification();
     setTimeout(function () {
-        sendSMSSuccessfully();
+        //alert("The value is : "+phone_no + ", " + msg);
+        sendSMS(phone_no, msg);
+        //sendSMSSuccessfully();
     }, 4000);
 });
 
@@ -629,7 +754,7 @@ var margin = {
     bottom: 0,
     left: 40
 },
-        width = 1080 - margin.left - margin.right,
+width = 1080 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
         gridSize = Math.floor(width / 22),
         legendElementWidth = (width / 6) - 90,
