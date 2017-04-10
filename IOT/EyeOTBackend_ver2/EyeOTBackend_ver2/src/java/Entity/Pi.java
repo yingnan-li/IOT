@@ -14,6 +14,10 @@ public class Pi {
     private String placed_location;
     private String type;
 
+    public Pi(String piID) {
+        this.piID = piID;
+    }
+
     public Pi(String piID, String placed_location, String type) {
         this.piID = piID;
         this.placed_location = placed_location;

@@ -5,14 +5,9 @@
  */
 package Controller;
 
-import DAO.BeaconDAO;
-import DAO.OfficerDAO;
-import DAO.PiOnTrolleytoBeaconDAO;
-import Entity.Officer;
 import Utility.General;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author kunsheng
+ * @author Jason
  */
-@WebServlet(name = "SendTrolleyDataAlarm", urlPatterns = {"/SendTrolleyDataAlarm"})
-public class SendTrolleyDataAlarm extends HttpServlet {
+@WebServlet(name = "SendSMS", urlPatterns = {"/SendSMS"})
+public class SendSMS extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,30 +32,15 @@ public class SendTrolleyDataAlarm extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        String beaconID = request.getParameter("BeaconID");
-        String PiID = request.getParameter("PiID");
-        String timestamp = request.getParameter("BeaconTimestamp");
-        String isBack = request.getParameter("isBack");
-        PiOnTrolleytoBeaconDAO piOnTrolleyToBeaconDAO = new PiOnTrolleytoBeaconDAO();
-        piOnTrolleyToBeaconDAO.insertTrolleyAlarmEvent(beaconID, PiID, Long.parseLong(timestamp), isBack);
-
-        BeaconDAO beaconDAO = new BeaconDAO();
-        String location = beaconDAO.getBeaconDetails(beaconID).getLocation();
-        OfficerDAO officerDao = new OfficerDAO();
+        PrintWriter out = response.getWriter();
+        
+        String phone_no = request.getParameter("phone_no");
+        String msg = request.getParameter("msg");
+        
         General general = new General();
-        List<Officer> officerList = officerDao.getAvailableOfficerList();
-
-        // sms is sent whenever alarm is triggered
-        if (isBack == null) {
-            for (Officer officer : officerList) {
-                String phoneNum = officer.getPhoneNum();
-                String name = officer.getName();
-                String msg = "Hello " + name + ",\n Please proceed to " + location + " to retrieve the trolley!";
-                String url = general.sendSMS(phoneNum, msg);
-                response.sendRedirect(url);
-            }
-        }
+        String url = general.sendSMS(phone_no, msg);
+        out.print("Message sent");
+        response.sendRedirect(url);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

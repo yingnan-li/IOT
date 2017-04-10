@@ -5,6 +5,8 @@
  */
 package Entity;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author user
@@ -13,6 +15,15 @@ public class Officer {
     private String phoneNum;
     private String name;
     private String status;
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Officer(String phoneNum, String name) {
         this.phoneNum = phoneNum;

@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 package DAO;
-import Entity.Officer;
+
+import Entity.Beacon;
 import Entity.Pi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,61 +18,62 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author user
+ * @author Jason
  */
-public class PiDAO { 
-    private final String PIID = "PiID";
-    private final String LOCATION_COL = "placed_location";
-    private final String TYPE_COL = "type";
+public class BeaconDAO {
     
+    private final String BEACON_ID = "BeaconID";
+    private final String LOCATION_COL = "Location";
+    private final String TYPE = "Type";
     
-    public Pi getPiDetails(String piID){
+    public Beacon getBeaconDetails(String beaconID){
         
-        Pi pi = null;
-        String sqlQuery="SELECT * FROM pi where PiID = ?";
+        Beacon beacon = null;
+        String sqlQuery = "SELECT * FROM beacon where BeaconID = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
             
-            ps.setString(1,piID);
+            ps.setString(1, beaconID);
             
             ResultSet results = ps.executeQuery();
             while(results.next()){
-                String location = results.getString(LOCATION_COL); 
-                String type = results.getString(TYPE_COL); 
-                pi = new Pi(piID, location, type);
+                String id = results.getString(BEACON_ID);
+                String location = results.getString(LOCATION_COL);                  
+                String type = results.getString(TYPE);                  
+                beacon = new Beacon(id, location, type); //  Beacon(String id, String location)
             }
             
           
         } catch (SQLException ex) {
             Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return pi;
+        return beacon;
         
     }
     
-    public List<Pi> getAllPiDetails(){
+    public List<Beacon> getAllExitBeaconDetails(){
         
-        List<Pi> piList = new ArrayList<>();
-        
-        Pi pi = null;
-        String sqlQuery="SELECT * FROM pi";
+        List<Beacon> beaconList = new ArrayList<>();
+        String sqlQuery = "SELECT * FROM beacon where type = 'exit'";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {
             
             ResultSet results = ps.executeQuery();
             while(results.next()){
-                String PiID = results.getString(PIID); 
-                pi = new Pi(PiID);
-                piList.add(pi);
+                String id = results.getString(BEACON_ID);
+                String location = results.getString(LOCATION_COL);   
+                String type = results.getString(TYPE); 
+                Beacon beacon = new Beacon(id, location, type); //  Beacon(String id, String location)
+                beaconList.add(beacon);
             }
             
           
         } catch (SQLException ex) {
             Logger.getLogger(PiOnTrolleytoBeaconDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return piList;
+        return beaconList;
         
     }
 }
