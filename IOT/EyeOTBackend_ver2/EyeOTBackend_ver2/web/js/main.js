@@ -301,134 +301,84 @@ function activeDutyTable(date) {
         list.push(i);
     }
 
-    for (x in list) {
-        if (list[x] < 8 | list[x] == 23) {
-            $("#duty-table").append("<tr class=\"duty-table-closed\">" +
-                    "<td style=\"text-align:center;\">" + convertSingleValueTime(list[x]) +
-                    "</td><td style=\"padding-left:20px;\">" +
-                    "<span>Closed</span></td></tr>");
-        } else {
-//            rand = Math.random()
-//            switch (true) {
-//                case (rand < 0.1):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.2):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.3):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.4):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.5):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.6):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-//                default:
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-            //}
+//    for (x in list) {
+//        if (list[x] < 8 | list[x] == 23) {
+//            $("#duty-table").append("<tr class=\"duty-table-closed\">" +
+//                    "<td style=\"text-align:center;\">" + convertSingleValueTime(list[x]) +
+//                    "</td><td style=\"padding-left:20px;\">" +
+//                    "<span>Closed</span></td></tr>");
+//        } else {
 
+            var d = new Date();
+            var date = d.getFullYear() + "-" + convertSingleValueTime(d.getMonth() + 1) + "-" + convertSingleValueTime(d.getDate()) + " " + returnCorrectTime(d);
 
             getEnforcementOfficerSchedule(date, function (response) {
 
-                mapOfficerToHour(response);
-                for (var x = 0; x < response.length; x++)
+                var scheduleMap = mapOfficerToHour(response);
+                for (var x = 0; x < 24; x++)
                 {
-                    var single = response[x];
-                    var officerName = single.officer.name;
-                    var phoneNum = single.officer.phoneNum;
-                    var startTime = single.startTime;
-                    var endTime = single.endTime;
-                    var image = single.officer.image;
 
-                    $('#enforcement-select').append($('<option>', {
-                        value: phoneNum,
-                        text: officerName
-                    }));
-
-
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-
-
+                    var list = scheduleMap[x];
+                    if(list!==undefined)
+                    {   
+                        var append = "<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">"+
+                                x+"</td><td style=\"padding-left:20px;\">";
+                        
+                         for (var i = 0; i<list.length; i++) {
+                        var single = list[i];
+                       
+                         append +="<img src=\""+single.officer.image+"\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title="+single.officer.phoneNum+">"; 
+//                        append +="<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title="+single.officer.phoneNum+">";
+                          }
+                          append+="</td></tr>";
+                           $("#duty-table").append(append);
+                               
+                    }else
+                    {
+                                    $("#duty-table").append("<tr class=\"duty-table-closed\">" +
+                    "<td style=\"text-align:center;\">" + x +
+                    "</td><td style=\"padding-left:20px;\">" +
+                    "<span>Closed</span></td></tr>");
+                    }
+                   
                 }
 
             });
-        }
-    }
+//        }
+//}
 }
-
 
 
 function mapOfficerToHour(data) {
+    var response = JSON.parse(data);
     var scheduleMap = {};
-for(var x=0; x <23 ; x++)
-{
-    for (var x = 0; x < data.length; x++)
+    for (var x = 0; x < 24; x++)
     {
-        var single = data[x];
-        var officerName = single.officer.name;
-        var phoneNum = single.officer.phoneNum;
-        var startTime = single.startTime;
-        var endTime = single.endTime;
-        var image = single.officer.image;
-
-        
-        if(x>startTime && x< endTime)
+        for (var i = 0; i < response.length; i++)
         {
-            var list = scheduleMap[x];
-            if(list ===undefined)
+            var single = response[i];
+            var officerName = single.officer.name;
+            var phoneNum = single.officer.phoneNum;
+            var startTime = single.startTime;
+            var endTime = single.endTime;
+            var image = single.officer.image;
+
+
+            if (x > startTime && x < endTime)
             {
-                list = [];
+                var list = scheduleMap[x];
+                if (list === undefined)
+                {
+                    list = [];
+                }
+                list.push(single);
+                scheduleMap[x] = list;
             }
-            list.push(x);
-            scheduleMap[x] = list;
+
         }
-        
-//        for(var i=startTime;i<=endTime;i++){
-//            scheduleMap[i] = single;
-//            
-//            
-//        }
 
     }
-    
-}
-    
+    return scheduleMap;
 
 
 }

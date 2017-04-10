@@ -1,3 +1,6 @@
+CREATE DATABASE  IF NOT EXISTS `iot2` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `iot2`;
+
 -- phpMyAdmin SQL Dump
 -- version 4.1.14
 -- http://www.phpmyadmin.net
