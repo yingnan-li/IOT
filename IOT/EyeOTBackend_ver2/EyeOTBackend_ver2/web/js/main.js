@@ -174,6 +174,13 @@ $(document).ready(function () {
     console.log(date);
     retrieveDaily(date);
     retrieveBattery();
+    
+    $test = $("#enforcement-select");
+    $('#enforcement-select').append($('<option>', {
+    value: 1,
+    text: 'My option'
+}));
+    
 });
 
 
@@ -244,6 +251,10 @@ function retrieveOverview() {
         }
     });
 }
+
+
+
+
 var actionableBattery = function (trolleyID, location) {
     var today = new Date();
     return "<tr><td>" + returnCorrectTime(today) + "</td><td>Shopping Cart " + trolleyID + " at Location " + location +
@@ -290,56 +301,64 @@ function activeDutyTable(date) {
                     "</td><td style=\"padding-left:20px;\">" +
                     "<span>Closed</span></td></tr>");
         } else {
-            rand = Math.random()
-            switch (true) {
-                case (rand < 0.1):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.2):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.3):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.4):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.5):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-                case (rand < 0.6):
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-                default:
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-                    break;
-            }
+            var selectedDate = $("#datepicker").val();
+            retrieveEmployeeSchedule(selectedDate, function(responseText){
+                
+                response = JSON.parse(responseText);
+                
+            });
+            
+            
+//            rand = Math.random()
+//            switch (true) {
+//                case (rand < 0.1):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.2):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.3):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.4):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.5):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//                case (rand < 0.6):
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//                default:
+//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
+//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
+//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
+//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
+//                            "</td></tr>");
+//                    break;
+//            }
         }
     }
 }
@@ -476,6 +495,23 @@ timeSeriesWeek = function (obj) {
             });
     alarmChart.render();
 };
+
+function retrieveEmployeeSchedule(date, responseFunction) {
+    $.ajax({
+        url: 'RetrieveEmployeeSchedule',
+        data: {
+            date: date
+        },
+        success: responseFunction
+//        success: function (responseText) {
+//            response = JSON.parse(responseText);
+//        }
+    });
+}
+
+
+
+
 
 function retrieveDaily(today) {
     $.ajax({
