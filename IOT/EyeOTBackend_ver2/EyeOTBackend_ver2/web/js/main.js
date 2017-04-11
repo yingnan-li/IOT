@@ -129,6 +129,7 @@ $(document).ready(function () {
     setInterval(function () {
         var today = new Date();
         $("#currentTime").text(returnCorrectTime(today));
+        actionableFunction($("#overview-missing").text()/$("#overview-total").text()*100);
     }, 1000);
 
     activeDutyTable(d);
@@ -262,12 +263,6 @@ function retrieveOverview() {
         }
     });
 }
-var actionableBattery = function (trolleyID, location) {
-    var today = new Date();
-    return "<tr><td>" + returnCorrectTime(today) + "</td><td>Shopping Cart " + trolleyID + " at Location " + location +
-            " needs to be recharged.</td><td><button type=\"button\"  id=\"actionable-battery\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\".send-sms-modal\">" +
-            "Send SMS</button></td></tr>";
-};
 
 var batteryTable = function (trolleyID, batt) {
     console.log(batt);
@@ -309,41 +304,41 @@ function activeDutyTable(date) {
 //                    "<span>Closed</span></td></tr>");
 //        } else {
 
-            var d = new Date();
-            var date = d.getFullYear() + "-" + convertSingleValueTime(d.getMonth() + 1) + "-" + convertSingleValueTime(d.getDate()) + " " + returnCorrectTime(d);
+    var d = new Date();
+    var date = d.getFullYear() + "-" + convertSingleValueTime(d.getMonth() + 1) + "-" + convertSingleValueTime(d.getDate()) + " " + returnCorrectTime(d);
 
-            getEnforcementOfficerSchedule(date, function (response) {
+    getEnforcementOfficerSchedule(date, function (response) {
 
-                var scheduleMap = mapOfficerToHour(response);
-                for (var x = 0; x < 24; x++)
-                {
+        var scheduleMap = mapOfficerToHour(response);
+        for (var x = 0; x < 24; x++)
+        {
 
-                    var list = scheduleMap[x];
-                    if(list!==undefined)
-                    {   
-                        var append = "<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">"+
-                                x+"</td><td style=\"padding-left:20px;\">";
-                        
-                         for (var i = 0; i<list.length; i++) {
-                        var single = list[i];
-                       
-                         append +="<img src=\""+single.officer.image+"\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title="+single.officer.phoneNum+">"; 
+            var list = scheduleMap[x];
+            if (list !== undefined)
+            {
+                var append = "<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                        x + "</td><td style=\"padding-left:20px;\">";
+
+                for (var i = 0; i < list.length; i++) {
+                    var single = list[i];
+
+                    append += "<img src=\"" + single.officer.image + "\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=" + single.officer.phoneNum + ">";
 //                        append +="<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title="+single.officer.phoneNum+">";
-                          }
-                          append+="</td></tr>";
-                           $("#duty-table").append(append);
-                               
-                    }else
-                    {
-                                    $("#duty-table").append("<tr class=\"duty-table-closed\">" +
-                    "<td style=\"text-align:center;\">" + x +
-                    "</td><td style=\"padding-left:20px;\">" +
-                    "<span>Closed</span></td></tr>");
-                    }
-                   
                 }
+                append += "</td></tr>";
+                $("#duty-table").append(append);
 
-            });
+            } else
+            {
+                $("#duty-table").append("<tr class=\"duty-table-closed\">" +
+                        "<td style=\"text-align:center;\">" + x +
+                        "</td><td style=\"padding-left:20px;\">" +
+                        "<span>Closed</span></td></tr>");
+            }
+
+        }
+
+    });
 //        }
 //}
 }
@@ -392,7 +387,7 @@ function mapOfficerToHour(data) {
 //**********************************
 var actionableFunction = function (percent) {
     var today = new Date();
-
+    var battery = "";
     var customButton = "<tr><td colspan=\"3\"><center><button type=\"button\" class=\"btn btn-success\" style=\"font-size: 1em; margin-top: 10px; width: 100%;\"" +
             "data-toggle=\"modal\" data-target=\".send-sms-modal\" id=\"actionable-custom\">Send Custom SMS</button></center></td></tr>";
 
@@ -404,13 +399,26 @@ var actionableFunction = function (percent) {
     var battArr = $(".danger-table").text().split(" ");
 
     for (var i = 0; i < battArr.length - 1; i++) {
-        actionableBattery(battArr[i].substring(0, 1), 1);
+        var trolleyID = battArr[i].substring(0, 1);
+        var batteryLvl = battArr[i].substring(7, battArr[i].length - 1);
+
+        if (batteryLvl < 20) {
+            battery = battery + actionableBattery(trolleyID, 1);
+        }
     }
-    var battery = "";
+
     var actionTable = overview + battery + customButton;
 
     $("#actionable-table").html(actionTable);
 };
+
+var actionableBattery = function (trolleyID, location) {
+    var today = new Date();
+    return "<tr><td>" + returnCorrectTime(today) + "</td><td>Shopping Cart " + trolleyID + " at Location " + location +
+            " needs to be recharged.</td><td><button type=\"button\"  id=\"actionable-battery\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\".send-sms-modal\">" +
+            "Send SMS</button></td></tr>";
+};
+
 
 $("#enforcement-select").change(function () {
     console.log($("#enforcement-select").val());
@@ -704,7 +712,7 @@ var margin = {
     bottom: 0,
     left: 40
 },
-width = 1080 - margin.left - margin.right,
+        width = 1080 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
         gridSize = Math.floor(width / 22),
         legendElementWidth = (width / 6) - 90,
