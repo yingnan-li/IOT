@@ -29,7 +29,7 @@ public class OfficerDAO {
         List<Officer> officerList = new ArrayList<>();
         
         String sqlQuery="SELECT * FROM officer o inner join schedule s on o.empID = s.empID " +
-            "where date=CURDATE() and start_time < Hour(Time(NOW())) and end_time > Hour(Time(NOW()))";
+            "where date=CURDATE() and start_time <= Hour(Time(NOW())) and end_time > Hour(Time(NOW()))";
         
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlQuery)) {

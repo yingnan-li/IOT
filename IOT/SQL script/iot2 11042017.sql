@@ -1,12 +1,9 @@
-CREATE DATABASE  IF NOT EXISTS `iot2` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `iot2`;
-
 -- phpMyAdmin SQL Dump
 -- version 4.1.14
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2017 at 02:37 PM
+-- Generation Time: Apr 10, 2017 at 06:58 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -22,6 +19,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `iot2`
 --
+CREATE DATABASE IF NOT EXISTS `iot2` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `iot2`;
 
 -- --------------------------------------------------------
 
@@ -32,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `beacon` (
   `BeaconID` varchar(50) NOT NULL,
   `Location` varchar(50) DEFAULT NULL,
-  `Type` varchar(255) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`BeaconID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -40,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `beacon` (
 -- Dumping data for table `beacon`
 --
 
-INSERT INTO `beacon` (`BeaconID`, `Location`, `Type`) VALUES
+INSERT INTO `beacon` (`BeaconID`, `Location`, `type`) VALUES
 ('http://iotsmusg28.com', 'At exit 28', 'exit'),
 ('http://iotsmusg29.com', 'At exit 29', 'exit'),
 ('http://iotsmusg30.com', 'At exit B', 'exit'),
@@ -57,8 +56,18 @@ CREATE TABLE IF NOT EXISTS `officer` (
   `name` varchar(45) DEFAULT NULL,
   `status` varchar(45) DEFAULT NULL,
   `empID` int(11) NOT NULL AUTO_INCREMENT,
+  `image` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`empID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+
+--
+-- Dumping data for table `officer`
+--
+
+INSERT INTO `officer` (`phone_num`, `name`, `status`, `empID`, `image`) VALUES
+('6594898452', 'Tan Kun Sheng', 'on', 1, 'img/wj.png'),
+('6596404133', 'Koh Chu Qian', 'on', 2, 'img/merv.png'),
+('6581153520', 'Li Yingnan', 'on', 7, 'img/mh.png');
 
 -- --------------------------------------------------------
 
@@ -76,8 +85,7 @@ CREATE TABLE IF NOT EXISTS `pi` (
 --
 
 INSERT INTO `pi` (`PiID`) VALUES
-('001'),
-('002');
+('001');
 
 -- --------------------------------------------------------
 
@@ -98,8 +106,35 @@ CREATE TABLE IF NOT EXISTS `pi_on_trolley` (
 --
 
 INSERT INTO `pi_on_trolley` (`PiID`, `TrolleyID`, `Battery`) VALUES
-('001', '1', NULL),
-('002', '2', 0);
+('001', '1', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `schedule`
+--
+
+CREATE TABLE IF NOT EXISTS `schedule` (
+  `date` date NOT NULL,
+  `empID` int(11) NOT NULL,
+  `start_time` int(11) DEFAULT NULL,
+  `end_time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`date`,`empID`),
+  KEY `fk_offier_idx` (`empID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `schedule`
+--
+
+INSERT INTO `schedule` (`date`, `empID`, `start_time`, `end_time`) VALUES
+('2017-04-03', 1, 8, 15),
+('2017-04-03', 2, 20, 23),
+('2017-04-10', 1, 12, 23),
+('2017-04-10', 7, 15, 20),
+('2017-04-11', 1, 8, 15),
+('2017-04-11', 2, 8, 12),
+('2017-04-11', 7, 8, 23);
 
 -- --------------------------------------------------------
 
@@ -131,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `trolleypi_beacon_event` (
   `TrolleyID` varchar(50) NOT NULL,
   `BeaconID` varchar(50) NOT NULL,
   `Timestamp` datetime NOT NULL,
-  `isBack` varchar(255) NOT NULL DEFAULT '''false''',
+  `isBack` varchar(45) DEFAULT 'false',
   PRIMARY KEY (`PiID`,`TrolleyID`,`BeaconID`,`Timestamp`),
   KEY `fk_beacon_idx` (`BeaconID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -141,28 +176,37 @@ CREATE TABLE IF NOT EXISTS `trolleypi_beacon_event` (
 --
 
 INSERT INTO `trolleypi_beacon_event` (`PiID`, `TrolleyID`, `BeaconID`, `Timestamp`, `isBack`) VALUES
-('001', '1', 'http://iotsmusg28.com', '2017-03-18 19:40:12', 'true'),
-('001', '1', 'http://iotsmusg28.com', '2017-03-18 19:54:55', 'false'),
-('001', '1', 'http://iotsmusg28.com', '2017-03-18 19:58:58', 'true'),
 ('001', '1', 'http://iotsmusg28.com', '2017-03-18 19:59:49', 'false'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:37:08', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:37:39', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:38:47', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:39:48', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:50:32', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:52:32', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:55:22', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:56:27', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:56:47', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:58:01', 'true'),
-('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:58:15', 'true'),
-('001', '1', 'http://Ks.com', '2017-03-15 18:44:12', 'false'),
-('001', '1', 'http://Ks.com', '2017-03-18 19:29:28', 'true'),
-('001', '1', 'http://Ks.com', '2017-03-18 19:33:25', 'false'),
-('001', '1', 'http://Ks.com', '2017-03-18 19:51:46', 'true'),
-('002', '2', 'http://iotsmusg28.com', '2017-03-18 20:59:50', 'true'),
-('002', '2', 'http://iotsmusg28.com', '2017-03-18 21:59:49', 'false'),
-('002', '2', 'http://iotsmusg28.com', '2017-04-02 00:00:00', 'false');
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:02:29', 'true'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:15:14', 'false'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:16:05', 'true'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:18:36', 'false'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:18:55', 'true'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:19:43', 'false'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:19:59', 'true'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:20:01', 'false'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:20:14', 'true'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:20:19', 'false'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:20:40', 'true'),
+('001', '1', 'http://iotsmusg28.com', '2017-04-02 19:21:07', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:29:28', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:33:25', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:37:08', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:37:39', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:38:47', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:39:48', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:40:12', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:50:32', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:51:46', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:52:32', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:54:55', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:55:22', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:56:27', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:56:47', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:58:01', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:58:15', 'false'),
+('001', '1', 'http://iotsmusg30.com', '2017-03-18 19:58:58', 'false'),
+('001', '1', 'http://Ks.com', '2017-03-15 18:44:12', 'false');
 
 --
 -- Constraints for dumped tables
@@ -174,6 +218,12 @@ INSERT INTO `trolleypi_beacon_event` (`PiID`, `TrolleyID`, `BeaconID`, `Timestam
 ALTER TABLE `pi_on_trolley`
   ADD CONSTRAINT `fk_pi` FOREIGN KEY (`PiID`) REFERENCES `pi` (`PiID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_trolley` FOREIGN KEY (`TrolleyID`) REFERENCES `trolley` (`TrolleyID`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `schedule`
+--
+ALTER TABLE `schedule`
+  ADD CONSTRAINT `fk_offier` FOREIGN KEY (`empID`) REFERENCES `officer` (`empID`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `trolleypi_beacon_event`

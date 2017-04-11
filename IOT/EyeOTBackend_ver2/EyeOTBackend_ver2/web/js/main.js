@@ -129,24 +129,36 @@ $(document).ready(function () {
     setInterval(function () {
         var today = new Date();
         $("#currentTime").text(returnCorrectTime(today));
+       
     }, 1000);
+    
+    setInterval(function () {
+     
+        actionableFunction($("#overview-missing").text()/$("#overview-total").text()*100);
+        
+          $("#actionable-overview").click(function () {
+            //console.log("overview");
+            $("#sms-textArea").text("Hi, NTUC Fairprice now has more than 20% of lost trolleys. Please go around the estate to retrieve these unreturned trolleys. Thank you.");
+        });
 
+        $("#actionable-battery").click(function () {
+//            console.log("battery");
+            var cart = $("#actionable-battery").parent().parent().text().split(" ")[2];
+            $("#sms-textArea").text("Hi, The battery for shopping Cart " + cart + " at Point 1 is running low. Please proceed to that location to change the batteries now. Thank you.");
+        });
+
+        
+        
+    }, 3000);
+    
+    
     activeDutyTable(d);
 
     timeSeriesMonth();
     setTimeout(function () {
         $('[data-toggle="tooltip"]').tooltip();
 
-        $("#actionable-overview").click(function () {
-            console.log("overview");
-            $("#sms-textArea").text("Hi, NTUC Fairprice now has more than 20% of lost trolleys. Please go around the estate to retrieve these unreturned trolleys. Thank you.");
-        });
-
-        $("#actionable-battery").click(function () {
-            console.log("battery");
-            $("#sms-textArea").text("Hi, The battery for shopping Cart [Cart] at [Location] is running low. Please proceed to that location to change the batteries now. Thank you.");
-        });
-
+      
 
         $(".replacing-battery").click(function () {
             console.log("replacing battery");
@@ -165,15 +177,27 @@ $(document).ready(function () {
         });
 
     }, 2000);
-
-    retrieveMonth();
+    
+    setInterval(function () {
+        var today = new Date();
+//        retrieveMonth();
+//        retrieveWeekly();
+        retrieveOverview();
+        //final date is "2017-04-03 17:36:02"
+        var date = today.getFullYear() + "-" + convertSingleValueTime(today.getMonth() + 1) + "-" + convertSingleValueTime(today.getDate()) + " " + returnCorrectTime(today);
+        retrieveDaily(date);
+        
+        
+    }, 5000);
+   
     retrieveWeekly();
-    retrieveOverview();
-    //final date is "2017-04-03 17:36:02"
+     retrieveMonth();
+     retrieveBattery();
+//    retrieveOverview();
+//    //final date is "2017-04-03 17:36:02"
     var date = d.getFullYear() + "-" + convertSingleValueTime(d.getMonth() + 1) + "-" + convertSingleValueTime(d.getDate()) + " " + returnCorrectTime(d);
-    console.log(date);
-    retrieveDaily(date);
-    retrieveBattery();
+//    retrieveDaily(date);
+//    retrieveBattery();
 
 
     // To generate enforcer schedule dynamically in MODAL
@@ -196,7 +220,7 @@ $(document).ready(function () {
 
 });
 
-
+//here
 $("#sync").click(function () {
     var today = new Date();
     retrieveMonth();
@@ -243,7 +267,7 @@ function retrieveOverview() {
             var total = response.total_trolley;
             var missing = response.missing_trolley;
             var current = total - missing;
-            var percent = (Math.floor(((total - missing) / total) * 100));
+            var percent = (Math.floor((missing / total) * 100));
 
             $("#overview-current").text(current);
             $("#overview-missing").text(missing);
@@ -264,16 +288,6 @@ function retrieveOverview() {
         }
     });
 }
-
-
-
-
-var actionableBattery = function (trolleyID, location) {
-    var today = new Date();
-    return "<tr><td>" + returnCorrectTime(today) + "</td><td>Shopping Cart " + trolleyID + " at Location " + location +
-            " needs to be recharged.</td><td><button type=\"button\"  id=\"actionable-battery\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\".send-sms-modal\">" +
-            "Send SMS</button></td></tr>";
-};
 
 var batteryTable = function (trolleyID, batt) {
     console.log(batt);
@@ -307,146 +321,83 @@ function activeDutyTable(date) {
         list.push(i);
     }
 
-    for (x in list) {
-        if (list[x] < 8 | list[x] == 23) {
-            $("#duty-table").append("<tr class=\"duty-table-closed\">" +
-                    "<td style=\"text-align:center;\">" + convertSingleValueTime(list[x]) +
-                    "</td><td style=\"padding-left:20px;\">" +
-                    "<span>Closed</span></td></tr>");
-        } else {
-
-            var selectedDate = $("#datepicker").val();
-            retrieveEmployeeSchedule(selectedDate, function(responseText){
-                
-                response = JSON.parse(responseText);
-                
-            });
-            
-            
-//            rand = Math.random()
-//            switch (true) {
-//                case (rand < 0.1):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.2):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.3):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.4):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.5):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-//                case (rand < 0.6):
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
-//                default:
-//                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-//                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-//                            "<img src=\"img/wj.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"96404133\">" +
-//                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-//                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-//                            "</td></tr>");
-//                    break;
+    var d = new Date();
+    var date = d.getFullYear() + "-" + convertSingleValueTime(d.getMonth() + 1) + "-" + convertSingleValueTime(d.getDate()) + " " + returnCorrectTime(d);
 
 
-            //}
+    getEnforcementOfficerSchedule(date, function (response) {
 
+        var scheduleMap = mapOfficerToHour(response);
+        for (var x = 0; x < 24; x++)
+        {
 
-            getEnforcementOfficerSchedule(date, function (response) {
+            var list = scheduleMap[x];
+            if (list !== undefined)
+            {
+                var append = "<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
+                        addZeros(x) + "</td><td style=\"padding-left:20px;\">";
 
-                mapOfficerToHour(response);
-                for (var x = 0; x < response.length; x++)
-                {
-                    var single = response[x];
-                    var officerName = single.officer.name;
-                    var phoneNum = single.officer.phoneNum;
-                    var startTime = single.startTime;
-                    var endTime = single.endTime;
-                    var image = single.officer.image;
+                for (var i = 0; i < list.length; i++) {
+                    var single = list[i];
 
-                    $('#enforcement-select').append($('<option>', {
-                        value: phoneNum,
-                        text: officerName
-                    }));
-
-
-                    $("#duty-table").append("<tr><td class=\"duty-table-centered\" style=\"text-align:center;\">" +
-                            convertSingleValueTime(list[x]) + "</td><td style=\"padding-left:20px;\">" +
-                            "<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"81837009\">" +
-                            "<img src=\"img/merv.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=\"90023521\">" +
-                            "</td></tr>");
-
-
+                    append += "<img src=\"" + single.officer.image + "\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title=" + single.officer.phoneNum + ">";
+//                        append +="<img src=\"img/mh.png\" class=\"image-responsive duty-img\" data-toggle=\"tooltip\" title="+single.officer.phoneNum+">";
                 }
+                append += "</td></tr>";
+                $("#duty-table").append(append);
 
-            });
+            } else
+            {
+                $("#duty-table").append("<tr class=\"duty-table-closed\">" +
+                        "<td style=\"text-align:center;\">" + addZeros(x) +
+                        "</td><td style=\"padding-left:20px;\">" +
+                        "<span>Closed</span></td></tr>");
+            }
+
         }
-    }
+
+    });
 }
-
-
+function addZeros(time)
+{
+    if(time<10)
+    {
+        time = "0"+time;
+    }
+    return time+"00";
+}
 
 function mapOfficerToHour(data) {
+    var response = JSON.parse(data);
     var scheduleMap = {};
-for(var x=0; x <23 ; x++)
-{
-    for (var x = 0; x < data.length; x++)
+    for (var x = 0; x < 24; x++)
     {
-        var single = data[x];
-        var officerName = single.officer.name;
-        var phoneNum = single.officer.phoneNum;
-        var startTime = single.startTime;
-        var endTime = single.endTime;
-        var image = single.officer.image;
-
-        
-        if(x>startTime && x< endTime)
+        for (var i = 0; i < response.length; i++)
         {
-            var list = scheduleMap[x];
-            if(list ===undefined)
+            var single = response[i];
+            var officerName = single.officer.name;
+            var phoneNum = single.officer.phoneNum;
+            var startTime = single.startTime;
+            var endTime = single.endTime;
+            var image = single.officer.image;
+
+
+            if (x >= startTime && x < endTime)
             {
-                list = [];
+                var list = scheduleMap[x];
+                if (list === undefined)
+                {
+                    list = [];
+                }
+                list.push(single);
+                scheduleMap[x] = list;
             }
-            list.push(x);
-            scheduleMap[x] = list;
+
 
         }
-        
-//        for(var i=startTime;i<=endTime;i++){
-//            scheduleMap[i] = single;
-//            
-//            
-//        }
 
     }
-    
-}
-    
+    return scheduleMap;
 
 
 }
@@ -460,7 +411,7 @@ for(var x=0; x <23 ; x++)
 //**********************************
 var actionableFunction = function (percent) {
     var today = new Date();
-
+    var battery = "";
     var customButton = "<tr><td colspan=\"3\"><center><button type=\"button\" class=\"btn btn-success\" style=\"font-size: 1em; margin-top: 10px; width: 100%;\"" +
             "data-toggle=\"modal\" data-target=\".send-sms-modal\" id=\"actionable-custom\">Send Custom SMS</button></center></td></tr>";
 
@@ -472,18 +423,38 @@ var actionableFunction = function (percent) {
     var battArr = $(".danger-table").text().split(" ");
 
     for (var i = 0; i < battArr.length - 1; i++) {
-        actionableBattery(battArr[i].substring(0, 1), 1);
+        var trolleyID = battArr[i].substring(0, 1);
+        var batteryLvl = battArr[i].substring(7, battArr[i].length - 1);
+
+        if (batteryLvl < 20) {
+            battery = battery + actionableBattery(trolleyID, 1);
+        }
     }
-    var battery = "";
+
     var actionTable = overview + battery + customButton;
 
     $("#actionable-table").html(actionTable);
 };
 
+var actionableBattery = function (trolleyID, location) {
+    var today = new Date();
+    return "<tr><td>" + returnCorrectTime(today) + "</td><td>Shopping Cart " + trolleyID + " at Location " + location +
+            " needs to be recharged.</td><td><button type=\"button\"  id=\"actionable-battery\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\".send-sms-modal\">" +
+            "Send SMS</button></td></tr>";
+};
+
+
 $("#enforcement-select").change(function () {
     console.log($("#enforcement-select").val());
     if ($("#enforcement-select").val() !== "<Manual Input>") {
-        $("#sms-textArea").text("Hi, " + $("#enforcement-select").val() + " NTUC Fairprice now has more than 20% of lost trolleys. Please go around the estate to retrieve these unreturned trolleys. Thank you.");
+        var selectedOfficer = $('#enforcement-select option:selected').text();
+//        alert(selectedOfficer);
+        $("#sms-textArea").text("Hi, " + selectedOfficer + " NTUC Fairprice now has more than 20% of lost trolleys. Please go around the estate to retrieve these unreturned trolleys. Thank you.");
+        
+        
+        
+//        $("#list option[value='2']").text()
+    
     } else {
         $("#sms-textArea").text("Hi, NTUC Fairprice now has more than 20% of lost trolleys. Please go around the estate to retrieve these unreturned trolleys. Thank you.");
     }
@@ -603,12 +574,12 @@ timeSeriesWeek = function (obj) {
                 axisX: {
                     lineDashType: "dot",
                     lineThickness: 2,
-                    title: "Alarms Triggered",
+                    title: "Week",
                     interval: 1,
                 },
                 axisY: {
                     gridThickness: 0,
-                    title: "Month"
+                    title: "Alarms Triggered"
 
                 },
                 data: [{
@@ -789,7 +760,7 @@ var margin = {
     bottom: 0,
     left: 40
 },
-width = 1080 - margin.left - margin.right,
+        width = 1080 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
         gridSize = Math.floor(width / 22),
         legendElementWidth = (width / 6) - 90,

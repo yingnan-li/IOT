@@ -13,6 +13,8 @@ import Utility.General;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,8 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author kunsheng
  */
-@WebServlet(name = "SendTrolleyDataAlarm", urlPatterns = {"/SendTrolleyDataAlarm"})
-public class SendTrolleyDataAlarm extends HttpServlet {
+@WebServlet(name = "SendTrolleyAlarm", urlPatterns = {"/SendTrolleyAlarm"})
+public class SendTrolleyAlarm extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,8 +39,7 @@ public class SendTrolleyDataAlarm extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        response.setContentType("text/html;charset=UTF-8");
-        String beaconID = request.getParameter("BeaconID");
+       String beaconID = request.getParameter("BeaconID");
         String PiID = request.getParameter("PiID");
         String timestamp = request.getParameter("BeaconTimestamp");
         String isBack = request.getParameter("isBack");
@@ -59,6 +60,12 @@ public class SendTrolleyDataAlarm extends HttpServlet {
                 String msg = "Hello " + name + ",\n Please proceed to " + location + " to retrieve the trolley!";
                 String url = general.sendSMS(phoneNum, msg);
                 response.sendRedirect(url);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SendTrolleyAlarm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
             }
         }
     }

@@ -81,7 +81,7 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
 //                    System.out.println("beacon event " + (hour.equalsIgnoreCase( f.parse(beacon_event.getTimestamp()).getHours()+"" )));
 //                    System.out.println("date " + (f.parse(beacon_event.getTimestamp()).getDate() == new Date().getDate()));
 //                    if(hour.equalsIgnoreCase( f.parse(beacon_event.getTimestamp()).getHours()+"" ) && f.parse(beacon_event.getTimestamp()).getDate() == new Date().getDate()){
-                    if(hour.equalsIgnoreCase( f.parse(beacon_event.getTimestamp()).getHours()+"" ) && f.parse(beacon_event.getTimestamp()).getDate() == f.parse(current_date).getDate()){
+                    if(hour.equalsIgnoreCase( addZeros(f.parse(beacon_event.getTimestamp()).getHours()) ) && f.parse(beacon_event.getTimestamp()).getDate() == f.parse(current_date).getDate()){
 //                        JsonObject trolleyObject = new JsonObject();
                         //get beacon location
                         String locationOfBeaconEvent = beaconDAO.getBeaconDetails(beacon_event.getBeaconID()).getLocation();
@@ -150,5 +150,13 @@ public class RetrieveDailyTriggeredAlarm extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
+private String addZeros(int time)
+    {
+        String newTime = time+"";
+        if(time<10)
+        {
+             newTime = "0"+time;
+        }
+        return newTime;
+    }
 }
